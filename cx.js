@@ -8,44 +8,50 @@
 // @icon         https://www.chaoxing.com/favicon.ico
 // @grant        none
 // ==/UserScript==
+
 window.onload = function(){
-    setTimeout(fun,500);
+    setTimeout(fun,2000);
 }
 function fun(){
+    var myinterval = null;
     var myinterval1 = null;
     var myinterval2 = null;
+    var myvideo = null;
+    var mytree = null;
+    var curclass = null;
     //提醒答题
     checkNotification();
 
 
+
     myinterval1 = setInterval(function(){
-        var ans=document.querySelector('.x-container').querySelector('.ans-videoquiz-title');
-        if(ans!=null){
-            speakxhh();
-            noticexhh();
-            clearInterval(myinterval1);
+
+        if(document.querySelector('.x-container')!=null){
+            var ans=document.querySelector('.x-container').querySelector('.ans-videoquiz-title');
+            if(ans!=null){
+                speakxhh();
+                noticexhh();
+                clearInterval(myinterval1);
+            }
         }
     }, 50);
 
-
-
-    var video = document.querySelector('video');
-    if(video){
-        var myinterval = null;
-
-        //不暂停播放
-        myinterval = setInterval(function(){
+    myinterval = setInterval(function(){
+        myvideo = document.querySelector('video');
+        mytree = window.top.document.querySelector('#coursetree');
+        if(myvideo&&mytree){
             var poster = document.querySelector('.vjs-poster');
-            if(isNaN(video.duration)){
+            //             console.log(myvideo.currentTime+':'+myvideo.duration);
+            if(isNaN(myvideo.duration)){
                 poster.click();
             }
-            else if(video.paused && (video.duration - video.currentTime > 10)){
+            else if(myvideo.paused && (myvideo.duration - myvideo.currentTime > 10)){
                 poster.click();
             }
-            else if(video.duration - video.currentTime < 10){
-                var curclass = document.querySelector('.onetoone').querySelector('.currents');
+            else if(myvideo.duration - myvideo.currentTime < 10){
+                curclass = window.top.document.querySelector('#coursetree').getElementsByClassName('currents')[0];
                 var nnextclass = curclass.parentNode.nextElementSibling;
-                if(isNaN(nnextclass)){//章节最后一课
+                if(nnextclass==null){//章节最后一课
                     var nnextchapter = curclass.parentNode.parentNode.nextElementSibling.querySelector('.ncells');
                     nnextchapter.querySelector('h4').querySelector('a').click();
                 }
@@ -53,8 +59,8 @@ function fun(){
                     nnextclass.querySelector('h4').querySelector('a').click();
                 }
             }
-        }, 50);
-    }
+        }
+    }, 50);
 }
 
 function checkNotification(){
